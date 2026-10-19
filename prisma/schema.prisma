@@ -1,0 +1,108 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model aluno {
+  id_aluno      Int      @id @default(autoincrement())
+  tx_nome       String   @db.VarChar(100)
+  tx_sexo       String   @db.Char(1)
+  dt_nascimento DateTime @db.Date
+  cursa         cursa[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model cursa {
+  id_aluno      Int
+  id_disciplina Int
+  in_ano        Int
+  in_semestre   Int
+  in_faltas     Int        @default(0)
+  nm_nota1      Decimal?   @db.Decimal(4, 2)
+  nm_nota2      Decimal?   @db.Decimal(4, 2)
+  nm_nota3      Decimal?   @db.Decimal(4, 2)
+  bl_aprovado   Boolean    @default(false)
+  aluno         aluno      @relation(fields: [id_aluno], references: [id_aluno], onDelete: Cascade)
+  disciplina    disciplina @relation(fields: [id_disciplina], references: [id_disciplina], onDelete: Cascade)
+
+  @@id([id_aluno, id_disciplina, in_ano, in_semestre])
+}
+
+model curso {
+  id_curso       Int          @id @default(autoincrement())
+  id_instituicao Int
+  id_tipo_curso  Int
+  tx_descricao   String       @db.VarChar(150)
+  instituicao    instituicao  @relation(fields: [id_instituicao], references: [id_instituicao], onDelete: NoAction, onUpdate: NoAction)
+  tipo_curso     tipo_curso   @relation(fields: [id_tipo_curso], references: [id_tipo_curso], onDelete: NoAction, onUpdate: NoAction)
+  disciplina     disciplina[]
+
+  @@unique([id_instituicao, id_tipo_curso, tx_descricao])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model disciplina {
+  id_disciplina      Int             @id @default(autoincrement())
+  id_curso           Int?
+  id_tipo_disciplina Int
+  tx_sigla           String          @unique @db.VarChar(10)
+  tx_descricao       String          @unique @db.VarChar(150)
+  in_periodo         Int
+  in_carga_horaria   Int
+  cursa              cursa[]
+  curso              curso?          @relation(fields: [id_curso], references: [id_curso], onDelete: NoAction, onUpdate: NoAction)
+  tipo_disciplina    tipo_disciplina @relation(fields: [id_tipo_disciplina], references: [id_tipo_disciplina], onDelete: NoAction, onUpdate: NoAction)
+  leciona            leciona[]
+}
+
+model instituicao {
+  id_instituicao Int     @id @default(autoincrement())
+  tx_sigla       String  @unique @db.VarChar(15)
+  tx_descricao   String  @unique @db.VarChar(150)
+  curso          curso[]
+}
+
+model leciona {
+  id_professor  Int
+  id_disciplina Int
+  disciplina    disciplina @relation(fields: [id_disciplina], references: [id_disciplina], onDelete: Cascade)
+  professor     professor  @relation(fields: [id_professor], references: [id_professor], onDelete: Cascade)
+
+  @@id([id_professor, id_disciplina])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model professor {
+  id_professor    Int       @id @default(autoincrement())
+  id_titulo       Int
+  tx_nome         String    @db.VarChar(50)
+  tx_sexo         String    @default("m") @db.Char(1)
+  tx_estado_civil String    @default("s") @db.Char(1)
+  dt_nascimento   DateTime  @db.Date
+  tx_telefone     String    @db.VarChar(13)
+  leciona         leciona[]
+  titulo          titulo    @relation(fields: [id_titulo], references: [id_titulo], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model tipo_curso {
+  id_tipo_curso Int     @id @default(autoincrement())
+  tx_descricao  String  @unique @db.VarChar(150)
+  curso         curso[]
+}
+
+model tipo_disciplina {
+  id_tipo_disciplina Int          @id @default(autoincrement())
+  tx_descricao       String       @unique @db.VarChar(150)
+  disciplina         disciplina[]
+}
+
+model titulo {
+  id_titulo    Int         @id @default(autoincrement())
+  tx_descricao String      @unique @db.VarChar(150)
+  professor    professor[]
+}
