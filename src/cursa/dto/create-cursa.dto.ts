@@ -25,21 +25,21 @@ export class CreateCursaDto {
 
   @IsInt()
   @IsOptional()
-  in_faltas: number;
+  in_faltas?: number;
 
   @IsNumber({ maxDecimalPlaces: 2 })
   @IsOptional()
-  nm_nota1: number;
+  nm_nota1?: number;
 
   @IsNumber({ maxDecimalPlaces: 2 })
   @IsOptional()
-  nm_nota2: number;
+  nm_nota2?: number;
 
   @IsNumber({ maxDecimalPlaces: 2 })
   @IsOptional()
-  nm_nota3: number;
+  nm_nota3?: number;
 
   @IsBoolean()
   @IsOptional()
-  bl_aprovado: boolean;
+  bl_aprovado?: boolean;
 }

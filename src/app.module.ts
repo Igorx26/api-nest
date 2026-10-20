@@ -4,9 +4,10 @@ import { InstituicaoModule } from './instituicao/instituicao.module.js';
 import { CursoModule } from './curso/curso.module.js';
 import { AlunoModule } from './aluno/aluno.module.js';
 import { CursaModule } from './cursa/cursa.module.js';
+import { DisciplinaModule } from './disciplina/disciplina.module.js';
 
 @Module({
-  imports: [PrismaModule, InstituicaoModule, CursoModule, AlunoModule, CursaModule],
+  imports: [PrismaModule, InstituicaoModule, CursoModule, AlunoModule, CursaModule, DisciplinaModule],
   controllers: [],
   providers: [],
 })
