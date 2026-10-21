@@ -9,9 +9,10 @@ import { LecionaModule } from './leciona/leciona.module.js';
 import { ProfessorModule } from './professor/professor.module.js';
 import { TipoCursoModule } from './tipo_curso/tipo_curso.module.js';
 import { TipoDisciplinaModule } from './tipo_disciplina/tipo_disciplina.module.js';
+import { TituloModule } from './titulo/titulo.module.js';
 
 @Module({
-  imports: [PrismaModule, InstituicaoModule, CursoModule, AlunoModule, CursaModule, DisciplinaModule, LecionaModule, ProfessorModule, TipoCursoModule, TipoDisciplinaModule],
+  imports: [PrismaModule, InstituicaoModule, CursoModule, AlunoModule, CursaModule, DisciplinaModule, LecionaModule, ProfessorModule, TipoCursoModule, TipoDisciplinaModule, TituloModule],
   controllers: [],
   providers: [],
 })
