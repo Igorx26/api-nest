@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTituloDto } from './dto/create-titulo.dto.js';
 import { UpdateTituloDto } from './dto/update-titulo.dto.js';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -7,16 +11,24 @@ import { PrismaService } from '../prisma/prisma.service.js';
 export class TituloService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createTituloDto: CreateTituloDto) {
+  async create(createTituloDto: CreateTituloDto) {
+    const tituloExistente = await this.prisma.titulo.findUnique({
+      where: { tx_descricao: createTituloDto.tx_descricao },
+    });
+
+    if (tituloExistente) {
+      throw new ConflictException(
+        `Título com a descrição "${createTituloDto.tx_descricao}" já existe.`,
+      );
+    }
+
     return this.prisma.titulo.create({
       data: createTituloDto,
     });
   }
 
   findAll() {
-    return this.prisma.titulo.findMany({
-      include: { professor: true },
-    });
+    return this.prisma.titulo.findMany();
   }
 
   async findOne(id: number) {
@@ -33,6 +45,19 @@ export class TituloService {
 
   async update(id: number, updateTituloDto: UpdateTituloDto) {
     await this.findOne(id);
+    const { tx_descricao } = updateTituloDto;
+
+    if (tx_descricao) {
+      const tituloExistente = await this.prisma.titulo.findUnique({
+        where: { tx_descricao: updateTituloDto.tx_descricao },
+      });
+
+      if (tituloExistente && tituloExistente.id_titulo !== id) {
+        throw new ConflictException(
+          `Título com a descrição "${updateTituloDto.tx_descricao}" já existe.`,
+        );
+      }
+    }
 
     return this.prisma.titulo.update({
       where: { id_titulo: id },

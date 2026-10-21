@@ -33,18 +33,18 @@ export class LecionaController {
     return this.lecionaService.findOne(+id_professor, +id_disciplina);
   }
 
-  @Patch(':id_professor/:id_disciplina')
-  update(
-    @Param('id_professor') id_professor: string,
-    @Param('id_disciplina') id_disciplina: string,
-    @Body() updateLecionaDto: UpdateLecionaDto,
-  ) {
-    return this.lecionaService.update(
-      +id_professor,
-      +id_disciplina,
-      updateLecionaDto,
-    );
-  }
+  // @Patch(':id_professor/:id_disciplina')
+  // update(
+  //   @Param('id_professor') id_professor: string,
+  //   @Param('id_disciplina') id_disciplina: string,
+  //   @Body() updateLecionaDto: UpdateLecionaDto,
+  // ) {
+  //   return this.lecionaService.update(
+  //     +id_professor,
+  //     +id_disciplina,
+  //     updateLecionaDto,
+  //   );
+  // }
 
   @Delete(':id_professor/:id_disciplina')
   remove(

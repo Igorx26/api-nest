@@ -38,8 +38,8 @@ export class DisciplinaService {
   findAll() {
     return this.prisma.disciplina.findMany({
       include: {
-        cursa: true,
-        leciona: true,
+        curso: true,
+        tipo_disciplina: true,
       },
     });
   }
@@ -48,8 +48,8 @@ export class DisciplinaService {
     const disciplina = await this.prisma.disciplina.findUnique({
       where: { id_disciplina: id },
       include: {
-        cursa: true,
-        leciona: true,
+        curso: true,
+        tipo_disciplina: true,
       },
     });
 

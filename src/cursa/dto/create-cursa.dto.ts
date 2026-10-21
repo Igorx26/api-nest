@@ -4,6 +4,8 @@ import {
   IsInt,
   IsNotEmpty,
   IsOptional,
+  Min,
+  Max,
 } from 'class-validator';
 
 export class CreateCursaDto {
@@ -24,18 +26,25 @@ export class CreateCursaDto {
   in_semestre: number;
 
   @IsInt()
+  @Min(0)
   @IsOptional()
   in_faltas?: number;
 
   @IsNumber({ maxDecimalPlaces: 2 })
+  @Max(10)
+  @Min(0)
   @IsOptional()
   nm_nota1?: number;
 
   @IsNumber({ maxDecimalPlaces: 2 })
+  @Max(10)
+  @Min(0)
   @IsOptional()
   nm_nota2?: number;
 
   @IsNumber({ maxDecimalPlaces: 2 })
+  @Max(10)
+  @Min(0)
   @IsOptional()
   nm_nota3?: number;
 

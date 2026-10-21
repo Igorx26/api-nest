@@ -9,17 +9,13 @@ export class ProfessorService {
 
   create(createProfessorDto: CreateProfessorDto) {
     return this.prisma.professor.create({
-      data: {
-        ...createProfessorDto,
-        dt_nascimento: new Date(createProfessorDto.dt_nascimento),
-      },
+      data: createProfessorDto,
     });
   }
 
   findAll() {
     return this.prisma.professor.findMany({
       include: {
-        leciona: true,
         titulo: true,
       },
     });
@@ -44,14 +40,9 @@ export class ProfessorService {
   async update(id: number, updateProfessorDto: UpdateProfessorDto) {
     await this.findOne(id);
 
-    const { dt_nascimento, ...rest } = updateProfessorDto;
-
     return this.prisma.professor.update({
       where: { id_professor: id },
-      data: {
-        ...rest,
-        ...(dt_nascimento && { dt_nascimento: new Date(dt_nascimento) }),
-      },
+      data: updateProfessorDto,
     });
   }
 

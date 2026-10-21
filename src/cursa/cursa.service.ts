@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCursaDto } from './dto/create-cursa.dto.js';
 import { UpdateCursaDto } from './dto/update-cursa.dto.js';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -7,7 +11,26 @@ import { PrismaService } from '../prisma/prisma.service.js';
 export class CursaService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createCursaDto: CreateCursaDto) {
+  async create(createCursaDto: CreateCursaDto) {
+    const { id_aluno, id_disciplina, in_ano, in_semestre } = createCursaDto;
+
+    const cursaExistente = await this.prisma.cursa.findUnique({
+      where: {
+        id_aluno_id_disciplina_in_ano_in_semestre: {
+          id_aluno,
+          id_disciplina,
+          in_ano,
+          in_semestre,
+        },
+      },
+    });
+
+    if (cursaExistente) {
+      throw new ConflictException(
+        `O aluno ${id_aluno} já está matriculado na disciplina ${id_disciplina} no período ${in_ano}.${in_semestre}.`,
+      );
+    }
+
     return this.prisma.cursa.create({
       data: createCursaDto,
     });

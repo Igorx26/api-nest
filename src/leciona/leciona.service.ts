@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateLecionaDto } from './dto/create-leciona.dto.js';
 import { UpdateLecionaDto } from './dto/update-leciona.dto.js';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -7,7 +11,23 @@ import { PrismaService } from '../prisma/prisma.service.js';
 export class LecionaService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createLecionaDto: CreateLecionaDto) {
+  async create(createLecionaDto: CreateLecionaDto) {
+    const { id_professor, id_disciplina } = createLecionaDto;
+    const lecionaExistente = await this.prisma.leciona.findUnique({
+      where: {
+        id_professor_id_disciplina: {
+          id_professor,
+          id_disciplina,
+        },
+      },
+    });
+
+    if (lecionaExistente) {
+      throw new ConflictException(
+        `Leciona já existe para o Professor ${id_professor} na Disciplina ${id_disciplina}.`,
+      );
+    }
+
     return this.prisma.leciona.create({ data: createLecionaDto });
   }
 
@@ -43,23 +63,23 @@ export class LecionaService {
     return leciona;
   }
 
-  async update(
-    id_professor: number,
-    id_disciplina: number,
-    updateLecionaDto: UpdateLecionaDto,
-  ) {
-    await this.findOne(id_professor, id_disciplina);
-
-    return this.prisma.leciona.update({
-      where: {
-        id_professor_id_disciplina: {
-          id_professor,
-          id_disciplina,
-        },
-      },
-      data: updateLecionaDto,
-    });
-  }
+  // Avaliar se realmente é necessário implementar o método update, pois a tabela leciona é uma tabela de relacionamento entre professor e disciplina, e não possui outros campos além das chaves estrangeiras.
+  // async update(
+  //   id_professor: number,
+  //   id_disciplina: number,
+  //   updateLecionaDto: UpdateLecionaDto,
+  // ) {
+  //   await this.findOne(id_professor, id_disciplina);
+  //   return this.prisma.leciona.update({
+  //     where: {
+  //       id_professor_id_disciplina: {
+  //         id_professor,
+  //         id_disciplina,
+  //       },
+  //     },
+  //     data: updateLecionaDto,
+  //   });
+  // }
 
   async remove(id_professor: number, id_disciplina: number) {
     await this.findOne(id_professor, id_disciplina);

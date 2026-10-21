@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTipoCursoDto } from './dto/create-tipo_curso.dto.js';
 import { UpdateTipoCursoDto } from './dto/update-tipo_curso.dto.js';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -7,14 +11,22 @@ import { PrismaService } from '../prisma/prisma.service.js';
 export class TipoCursoService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createTipoCursoDto: CreateTipoCursoDto) {
+  async create(createTipoCursoDto: CreateTipoCursoDto) {
+    const tipoCursoExistente = await this.prisma.tipo_curso.findUnique({
+      where: { tx_descricao: createTipoCursoDto.tx_descricao },
+    });
+
+    if (tipoCursoExistente) {
+      throw new ConflictException(
+        `Tipo de Curso com a descrição "${createTipoCursoDto.tx_descricao}" já existe.`,
+      );
+    }
+
     return this.prisma.tipo_curso.create({ data: createTipoCursoDto });
   }
 
   findAll() {
-    return this.prisma.tipo_curso.findMany({
-      include: { curso: true },
-    });
+    return this.prisma.tipo_curso.findMany();
   }
 
   async findOne(id: number) {
@@ -33,6 +45,19 @@ export class TipoCursoService {
 
   async update(id: number, updateTipoCursoDto: UpdateTipoCursoDto) {
     await this.findOne(id);
+    const { tx_descricao } = updateTipoCursoDto;
+
+    if (tx_descricao) {
+      const tipoCursoExistente = await this.prisma.tipo_curso.findUnique({
+        where: { tx_descricao: updateTipoCursoDto.tx_descricao },
+      });
+
+      if (tipoCursoExistente && tipoCursoExistente.id_tipo_curso !== id) {
+        throw new ConflictException(
+          `Tipo de Curso com a descrição "${updateTipoCursoDto.tx_descricao}" já existe.`,
+        );
+      }
+    }
 
     return this.prisma.tipo_curso.update({
       where: { id_tipo_curso: id },

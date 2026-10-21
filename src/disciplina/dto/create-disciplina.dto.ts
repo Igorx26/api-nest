@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsInt, IsOptional, IsString, Min } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsInt,
+  IsOptional,
+  IsString,
+  Min,
+  MaxLength,
+} from 'class-validator';
 
 export class CreateDisciplinaDto {
   @IsInt()
@@ -10,10 +17,12 @@ export class CreateDisciplinaDto {
   id_tipo_disciplina: number;
 
   @IsString()
+  @MaxLength(10)
   @IsNotEmpty()
   tx_sigla: string;
 
   @IsString()
+  @MaxLength(150)
   @IsNotEmpty()
   tx_descricao: string;
 

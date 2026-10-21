@@ -48,6 +48,7 @@ export class CursoService {
       include: {
         instituicao: true,
         tipo_curso: true,
+        disciplina: true,
       },
     });
 
