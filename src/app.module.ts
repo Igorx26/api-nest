@@ -7,9 +7,10 @@ import { CursaModule } from './cursa/cursa.module.js';
 import { DisciplinaModule } from './disciplina/disciplina.module.js';
 import { LecionaModule } from './leciona/leciona.module.js';
 import { ProfessorModule } from './professor/professor.module.js';
+import { TipoCursoModule } from './tipo_curso/tipo_curso.module.js';
 
 @Module({
-  imports: [PrismaModule, InstituicaoModule, CursoModule, AlunoModule, CursaModule, DisciplinaModule, LecionaModule, ProfessorModule],
+  imports: [PrismaModule, InstituicaoModule, CursoModule, AlunoModule, CursaModule, DisciplinaModule, LecionaModule, ProfessorModule, TipoCursoModule],
   controllers: [],
   providers: [],
 })
