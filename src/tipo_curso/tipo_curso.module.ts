@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TipoCursoService } from './tipo_curso.service.js';
 import { TipoCursoController } from './tipo_curso.controller.js';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { PrismaModule } from '../prisma/prisma.module.js';
 
 @Module({
-  imports: [PrismaService],
+  imports: [PrismaModule],
   controllers: [TipoCursoController],
   providers: [TipoCursoService],
 })
