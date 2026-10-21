@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCursoDto } from './dto/create-curso.dto.js';
 import { UpdateCursoDto } from './dto/update-curso.dto.js';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -7,7 +11,25 @@ import { PrismaService } from '../prisma/prisma.service.js';
 export class CursoService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createCursoDto: CreateCursoDto) {
+  async create(createCursoDto: CreateCursoDto) {
+    const { id_instituicao, id_tipo_curso, tx_descricao } = createCursoDto;
+
+    const cursoExistente = await this.prisma.curso.findUnique({
+      where: {
+        id_instituicao_id_tipo_curso_tx_descricao: {
+          id_instituicao,
+          id_tipo_curso,
+          tx_descricao,
+        },
+      },
+    });
+
+    if (cursoExistente) {
+      throw new ConflictException(
+        `Este curso já está cadastrado nesta instituição.`,
+      );
+    }
+
     return this.prisma.curso.create({ data: createCursoDto });
   }
 
@@ -37,7 +59,29 @@ export class CursoService {
   }
 
   async update(id: number, updateCursoDto: UpdateCursoDto) {
-    await this.findOne(id);
+    const cursoAtual = await this.findOne(id);
+
+    const id_instituicao =
+      updateCursoDto.id_instituicao ?? cursoAtual.id_instituicao;
+    const id_tipo_curso =
+      updateCursoDto.id_tipo_curso ?? cursoAtual.id_tipo_curso;
+    const tx_descricao = updateCursoDto.tx_descricao ?? cursoAtual.tx_descricao;
+
+    const cursoExistente = await this.prisma.curso.findUnique({
+      where: {
+        id_instituicao_id_tipo_curso_tx_descricao: {
+          id_instituicao,
+          id_tipo_curso,
+          tx_descricao,
+        },
+      },
+    });
+
+    if (cursoExistente && cursoExistente.id_curso !== id) {
+      throw new ConflictException(
+        `Este curso já está cadastrado nesta instituição.`,
+      );
+    }
 
     return this.prisma.curso.update({
       where: { id_curso: id },

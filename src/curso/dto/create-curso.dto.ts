@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsString, MaxLength } from 'class-validator';
 
 export class CreateCursoDto {
   @IsInt()
@@ -10,6 +10,7 @@ export class CreateCursoDto {
   id_tipo_curso: number;
 
   @IsString()
+  @MaxLength(150)
   @IsNotEmpty()
   tx_descricao: string;
 }

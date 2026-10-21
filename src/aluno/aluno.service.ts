@@ -9,17 +9,12 @@ export class AlunoService {
 
   create(createAlunoDto: CreateAlunoDto) {
     return this.prisma.aluno.create({
-      data: {
-        ...createAlunoDto,
-        dt_nascimento: new Date(createAlunoDto.dt_nascimento),
-      },
+      data: createAlunoDto,
     });
   }
 
   findAll() {
-    return this.prisma.aluno.findMany({
-      include: { cursa: true },
-    });
+    return this.prisma.aluno.findMany();
   }
 
   async findOne(id: number) {
@@ -38,14 +33,9 @@ export class AlunoService {
   async update(id: number, updateAlunoDto: UpdateAlunoDto) {
     await this.findOne(id);
 
-    const { dt_nascimento, ...rest } = updateAlunoDto;
-
     return this.prisma.aluno.update({
       where: { id_aluno: id },
-      data: {
-        ...rest,
-        ...(dt_nascimento && new Date(dt_nascimento)),
-      },
+      data: updateAlunoDto,
     });
   }
 

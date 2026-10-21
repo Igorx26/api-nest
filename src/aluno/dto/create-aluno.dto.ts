@@ -1,7 +1,10 @@
-import { IsDateString, IsIn, IsNotEmpty, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsIn, IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { Age } from '../../common/validators/age.validator.js';
 
 export class CreateAlunoDto {
   @IsString()
+  @MaxLength(100)
   @IsNotEmpty()
   tx_nome: string;
 
@@ -10,7 +13,8 @@ export class CreateAlunoDto {
   @IsNotEmpty()
   tx_sexo: string;
 
-  @IsDateString()
+  @Type(() => Date)
+  @Age(10)
   @IsNotEmpty()
-  dt_nascimento: string;
+  dt_nascimento: Date;
 }
